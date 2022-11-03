@@ -1,6 +1,6 @@
 [package]
 name = "create-react-typescript-npm-package"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 description = "Quickly scaffold a project for a React component that uses Typescript"

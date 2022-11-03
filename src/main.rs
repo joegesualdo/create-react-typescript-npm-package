@@ -25,7 +25,7 @@ fn main() {
   }}
 }}
 "#, project_name).trim().as_bytes()).unwrap();
-    Command::new("npm").args(["add", "-D", "typescript", "react", "react-dom", "@types/react"]).output().expect("failed to execute process");
+    Command::new("pnpm").args(["add", "-D", "@ladle/react","typescript", "react", "react-dom", "@types/react"]).output().expect("failed to execute process");
     Command::new("npm").args(["install"]).output().expect("failed to execute process");
     let mut gitignore_file = File::create(".gitignore").unwrap();
     gitignore_file.write_all(b"\
@@ -54,6 +54,11 @@ dist
 # Build
 ```bash
 $ npm run build
+```
+# Run component library
+> Used for testing purposes
+```bash
+$ pnpm ladle serve
 ```
 
 # Publish 
@@ -88,5 +93,26 @@ export function Counter() {{
     let mut indexts_example_file = File::create("index.ts").unwrap();
     indexts_example_file.write_all(format!(r#"
 export {{ Counter }} from "./counter";
+"#).trim().as_bytes()).unwrap();
+    set_current_dir("..").expect("Unable to change into [path to executable]/nvs");
+    Command::new("mkdir").args([".ladle"]).output().expect("failed to execute process");
+    set_current_dir(".ladle").expect("Unable to change into [path to executable]/nvs");
+    let mut ladleconfig_file = File::create("config.mjs").unwrap();
+    ladleconfig_file.write_all(format!(r#"
+export default {{
+  stories: [
+    "src/**/*.stories.{{js,jsx,ts,tsx}}",
+    "examples/**/*.stories.{{js,jsx,ts,tsx}}",
+  ],
+}};
+"#).trim().as_bytes()).unwrap();
+    set_current_dir("..").expect("Unable to change into [path to executable]/nvs");
+    Command::new("mkdir").args(["examples"]).output().expect("failed to execute process");
+    set_current_dir("examples").expect("Unable to change into [path to executable]/nvs");
+    let mut examplestory_file = File::create("counter.stories.tsx").unwrap();
+    examplestory_file.write_all(format!(r#"
+import {{ Counter }} from "./../src/counter";
+
+export const Example = () => <Counter />;
 "#).trim().as_bytes()).unwrap();
 }
